@@ -1,0 +1,356 @@
+<div class="card">
+                <h2>📊 Intervalos de Confianza con R</h2>
+                
+                <h3>🔧 Configuración Inicial</h3>
+                <div class="code-block"><pre><code class="language-r"># Instalar paquetes necesarios (solo una vez)
+install.packages("tidyverse")
+install.packages("Rmisc")
+
+# Cargar librerías
+library(tidyverse)
+library(Rmisc)</code></pre></div>
+                
+                <h3>📊 IC para la Media de Una Población</h3>
+                <div class="example-box">
+                    <h4>Ejemplo: Concentración de Glucosa</h4>
+                    <div class="code-block"><pre><code class="language-r"># ============================================================
+# IC PARA UNA MEDIA EN R
+# ============================================================
+
+# Datos: Concentración de glucosa (g/L) en biorreactor
+glucosa <- c(4.1, 4.3, 4.0, 4.2, 4.4, 4.1, 4.3, 4.2, 4.1, 4.5,
+             4.0, 4.3, 4.2, 4.1, 4.4)
+
+# Estadísticas descriptivas
+cat("═══════════════════════════════════════════════════════\n")
+cat("ESTADÍSTICAS DESCRIPTIVAS\n")
+cat("═══════════════════════════════════════════════════════\n")
+cat("Tamaño de muestra:", length(glucosa), "\n")
+cat("Media:", mean(glucosa), "g/L\n")
+cat("Mediana:", median(glucosa), "g/L\n")
+cat("Desviación estándar:", sd(glucosa), "g/L\n")
+cat("Mínimo:", min(glucosa), "g/L\n")
+cat("Máximo:", max(glucosa), "g/L\n\n")
+
+# Calcular IC 95% usando t.test
+resultado <- t.test(glucosa, conf.level = 0.95)
+
+cat("═══════════════════════════════════════════════════════\n")
+cat("INTERVALO DE CONFIANZA 95%\n")
+cat("═══════════════════════════════════════════════════════\n")
+cat("IC 95%: [", resultado$conf.int[1], ",", resultado$conf.int[2], "] g/L\n")
+cat("Media:", resultado$estimate, "g/L\n")
+cat("Margen de error:", (resultado$conf.int[2] - resultado$conf.int[1])/2, "g/L\n\n")
+
+# Verificar normalidad
+cat("═══════════════════════════════════════════════════════\n")
+cat("VERIFICACIÓN DE NORMALIDAD\n")
+cat("═══════════════════════════════════════════════════════\n")
+shapiro_test <- shapiro.test(glucosa)
+cat("Test de Shapiro-Wilk:\n")
+cat("  W =", shapiro_test$statistic, "\n")
+cat("  p-valor =", shapiro_test$p.value, "\n")
+if (shapiro_test$p.value > 0.05) {
+  cat("  ✓ Los datos son normales (p > 0.05)\n\n")
+} else {
+  cat("  ⚠ Los datos NO son normales (p < 0.05)\n\n")
+}
+
+# Visualización
+par(mfrow = c(1, 3))
+
+# Histograma
+hist(glucosa, 
+     main = "Distribución de Glucosa",
+     xlab = "Concentración (g/L)",
+     ylab = "Frecuencia",
+     col = "#16a085",
+     border = "white",
+     breaks = 8)
+abline(v = mean(glucosa), col = "red", lwd = 2, lty = 2)
+abline(v = resultado$conf.int[1], col = "orange", lwd = 2, lty = 3)
+abline(v = resultado$conf.int[2], col = "orange", lwd = 2, lty = 3)
+legend("topright", 
+       c("Media", "IC 95%"),
+       col = c("red", "orange"),
+       lty = c(2, 3),
+       lwd = 2)
+
+# Boxplot
+boxplot(glucosa,
+        main = "Boxplot de Glucosa",
+        ylab = "Concentración (g/L)",
+        col = "lightgreen",
+        border = "darkgreen")
+abline(h = mean(glucosa), col = "red", lwd = 2, lty = 2)
+
+# Q-Q plot para normalidad
+qqnorm(glucosa, main = "Q-Q Plot")
+qqline(glucosa, col = "red", lwd = 2)
+
+par(mfrow = c(1, 1))
+
+# Interpretación
+cat("═══════════════════════════════════════════════════════\n")
+cat("INTERPRETACIÓN\n")
+cat("═══════════════════════════════════════════════════════\n")
+cat("Con 95% de confianza, la concentración media de glucosa\n")
+cat("en el biorreactor está entre", round(resultado$conf.int[1], 3), 
+    "y", round(resultado$conf.int[2], 3), "g/L.\n")</code></pre></div>
+                </div>
+                
+                <h3>📈 IC para una Proporción</h3>
+                <div class="example-box">
+                    <h4>Ejemplo: Tasa de Éxito en Clonación</h4>
+                    <div class="code-block"><pre><code class="language-r"># ============================================================
+# IC PARA UNA PROPORCIÓN EN R
+# ============================================================
+
+# Datos: Experimento de clonación molecular
+n <- 150  # Número de intentos
+x <- 123  # Clonaciones exitosas
+
+cat("═══════════════════════════════════════════════════════\n")
+cat("INTERVALO DE CONFIANZA PARA UNA PROPORCIÓN\n")
+cat("═══════════════════════════════════════════════════════\n")
+cat("n =", n, "intentos\n")
+cat("x =", x, "éxitos\n")
+cat("p̂ =", x/n, sprintf("(%.2f%%)\n", x/n*100))
+
+# Calcular IC usando prop.test
+resultado_prop <- prop.test(x, n, conf.level = 0.95)
+
+cat("\nIC 95% para la proporción:\n")
+cat("  Proporción muestral:", resultado_prop$estimate, "\n")
+cat("  IC 95%: [", resultado_prop$conf.int[1], ",", 
+    resultado_prop$conf.int[2], "]\n")
+cat("  En porcentaje: [", round(resultado_prop$conf.int[1]*100, 2), "%,",
+    round(resultado_prop$conf.int[2]*100, 2), "%]\n\n")
+
+# Verificar condiciones
+cat("Verificación de condiciones:\n")
+cat("  n·p̂ =", n * x/n, ifelse(n * x/n >= 10, "≥ 10 ✓\n", "< 10 ✗\n"))
+cat("  n·(1-p̂) =", n * (1-x/n), ifelse(n * (1-x/n) >= 10, "≥ 10 ✓\n", "< 10 ✗\n"))
+
+# Visualización
+par(mfrow = c(1, 2))
+
+# Gráfico de barras
+barplot(c(n-x, x),
+        names.arg = c("Fallidos", "Exitosos"),
+        main = "Resultados de Clonación",
+        ylab = "Frecuencia",
+        col = c("#e74c3c", "#16a085"),
+        border = NA)
+text(0.7, (n-x)/2, n-x, cex = 1.5, font = 2)
+text(1.9, n-x + x/2, x, cex = 1.5, font = 2, col = "white")
+
+# IC visualizado
+plot(1, resultado_prop$estimate, 
+     xlim = c(0.5, 1.5),
+     ylim = c(0.7, 0.95),
+     pch = 19,
+     cex = 3,
+     col = "#16a085",
+     xlab = "",
+     ylab = "Tasa de Éxito",
+     main = "IC 95% para Proporción",
+     xaxt = "n")
+arrows(1, resultado_prop$conf.int[1],
+       1, resultado_prop$conf.int[2],
+       angle = 90,
+       code = 3,
+       length = 0.15,
+       lwd = 3,
+       col = "#16a085")
+abline(h = resultado_prop$estimate, col = "red", lty = 2)
+text(1.1, resultado_prop$estimate, 
+     sprintf("%.1f%%", resultado_prop$estimate*100),
+     pos = 4, cex = 1.2, font = 2)
+
+par(mfrow = c(1, 1))</code></pre></div>
+                </div>
+                
+                <h3>⚖️ IC para Diferencia de Dos Medias</h3>
+                <div class="example-box">
+                    <h4>Ejemplo: Comparación de Tratamientos</h4>
+                    <div class="code-block"><pre><code class="language-r"># ============================================================
+# IC PARA DIFERENCIA DE DOS MEDIAS EN R
+# ============================================================
+
+# Datos: Actividad enzimática (U/mL) con dos tratamientos
+tratamiento_A <- c(12.3, 13.1, 12.8, 13.5, 12.6, 13.2, 12.9, 13.4, 12.7, 13.0)
+tratamiento_B <- c(14.2, 15.1, 14.6, 15.3, 14.8, 15.0, 14.5, 15.2, 14.9, 15.1)
+
+cat("═══════════════════════════════════════════════════════\n")
+cat("COMPARACIÓN DE DOS TRATAMIENTOS\n")
+cat("═══════════════════════════════════════════════════════\n\n")
+
+# Estadísticas de cada grupo
+cat("Tratamiento A:\n")
+cat("  n =", length(tratamiento_A), "\n")
+cat("  Media =", mean(tratamiento_A), "U/mL\n")
+cat("  SD =", sd(tratamiento_A), "U/mL\n\n")
+
+cat("Tratamiento B:\n")
+cat("  n =", length(tratamiento_B), "\n")
+cat("  Media =", mean(tratamiento_B), "U/mL\n")
+cat("  SD =", sd(tratamiento_B), "U/mL\n\n")
+
+# Test de Levene para igualdad de varianzas
+library(car)
+datos_combinados <- data.frame(
+  valor = c(tratamiento_A, tratamiento_B),
+  grupo = factor(c(rep("A", length(tratamiento_A)), 
+                   rep("B", length(tratamiento_B))))
+)
+
+levene_test <- leveneTest(valor ~ grupo, data = datos_combinados)
+cat("Test de Levene para igualdad de varianzas:\n")
+cat("  F =", levene_test$`F value`[1], "\n")
+cat("  p-valor =", levene_test$`Pr(>F)`[1], "\n")
+
+if (levene_test$`Pr(>F)`[1] > 0.05) {
+  cat("  → Varianzas iguales (usar var.equal = TRUE)\n\n")
+  usar_pooled <- TRUE
+} else {
+  cat("  → Varianzas diferentes (usar var.equal = FALSE, Welch)\n\n")
+  usar_pooled <- FALSE
+}
+
+# Calcular IC para diferencia de medias
+resultado_ttest <- t.test(tratamiento_B, tratamiento_A, 
+                           var.equal = usar_pooled,
+                           conf.level = 0.95)
+
+cat("═══════════════════════════════════════════════════════\n")
+cat("INTERVALO DE CONFIANZA 95%\n")
+cat("═══════════════════════════════════════════════════════\n")
+cat("Diferencia de medias (B - A):", resultado_ttest$estimate[1] - resultado_ttest$estimate[2], "U/mL\n")
+cat("IC 95%: [", resultado_ttest$conf.int[1], ",", resultado_ttest$conf.int[2], "] U/mL\n")
+cat("Estadístico t:", resultado_ttest$statistic, "\n")
+cat("p-valor:", resultado_ttest$p.value, "\n\n")
+
+# Interpretación
+cat("═══════════════════════════════════════════════════════\n")
+cat("INTERPRETACIÓN\n")
+cat("═══════════════════════════════════════════════════════\n")
+if (resultado_ttest$conf.int[1] > 0) {
+  cat("✓ El Tratamiento B es significativamente MEJOR que A\n")
+  cat("  (todo el IC está por encima de cero)\n")
+} else if (resultado_ttest$conf.int[2] < 0) {
+  cat("✗ El Tratamiento A es significativamente MEJOR que B\n")
+  cat("  (todo el IC está por debajo de cero)\n")
+} else {
+  cat("⚠ No hay diferencia significativa entre tratamientos\n")
+  cat("  (el IC incluye el cero)\n")
+}
+
+# Visualización comparativa
+par(mfrow = c(1, 3))
+
+# Boxplots lado a lado
+boxplot(tratamiento_A, tratamiento_B,
+        names = c("Tratamiento A", "Tratamiento B"),
+        main = "Comparación de Tratamientos",
+        ylab = "Actividad Enzimática (U/mL)",
+        col = c("#3498db", "#16a085"),
+        border = "darkgray",
+        notch = TRUE)
+
+# Histogramas superpuestos
+hist(tratamiento_A, 
+     col = rgb(0.2, 0.5, 0.8, 0.5),
+     main = "Distribuciones Superpuestas",
+     xlab = "Actividad (U/mL)",
+     breaks = 5,
+     xlim = range(c(tratamiento_A, tratamiento_B)))
+hist(tratamiento_B, 
+     col = rgb(0.1, 0.6, 0.5, 0.5),
+     add = TRUE,
+     breaks = 5)
+legend("topright",
+       c("Tratamiento A", "Tratamiento B"),
+       fill = c(rgb(0.2, 0.5, 0.8, 0.5), rgb(0.1, 0.6, 0.5, 0.5)))
+
+# IC para la diferencia
+diff_medias <- mean(tratamiento_B) - mean(tratamiento_A)
+plot(1, diff_medias,
+     xlim = c(0.5, 1.5),
+     ylim = c(resultado_ttest$conf.int[1] - 0.2, 
+              resultado_ttest$conf.int[2] + 0.2),
+     pch = 19,
+     cex = 3,
+     col = "#16a085",
+     main = "IC 95% para Diferencia",
+     ylab = "Diferencia (B - A) en U/mL",
+     xlab = "",
+     xaxt = "n")
+arrows(1, resultado_ttest$conf.int[1],
+       1, resultado_ttest$conf.int[2],
+       angle = 90,
+       code = 3,
+       length = 0.15,
+       lwd = 3,
+       col = "#16a085")
+abline(h = 0, col = "red", lty = 2, lwd = 2)
+abline(h = diff_medias, col = "gray", lty = 3)
+text(1.1, diff_medias, sprintf("%.2f", diff_medias), pos = 4, font = 2)
+
+par(mfrow = c(1, 1))</code></pre></div>
+                </div>
+                
+                <h3>📦 Función Personalizada para ICs en R</h3>
+                <div class="code-block"><pre><code class="language-r"># ============================================================
+# FUNCIÓN REUTILIZABLE PARA IC DE UNA MEDIA
+# ============================================================
+
+calcular_ic_media <- function(datos, confianza = 0.95) {
+  # Validación
+  if (!is.numeric(datos)) {
+    stop("Los datos deben ser numéricos")
+  }
+  
+  n <- length(datos)
+  media <- mean(datos)
+  desv_std <- sd(datos)
+  error_std <- desv_std / sqrt(n)
+  
+  # Calcular IC usando distribución t
+  alpha <- 1 - confianza
+  t_crit <- qt(1 - alpha/2, df = n-1)
+  margen_error <- t_crit * error_std
+  
+  ic_inferior <- media - margen_error
+  ic_superior <- media + margen_error
+  
+  # Crear objeto de resultados
+  resultado <- list(
+    n = n,
+    media = media,
+    desv_std = desv_std,
+    error_std = error_std,
+    nivel_confianza = confianza,
+    ic_inferior = ic_inferior,
+    ic_superior = ic_superior,
+    margen_error = margen_error,
+    t_critico = t_crit
+  )
+  
+  # Imprimir resumen
+  cat("═══════════════════════════════════════════════════════\n")
+  cat("INTERVALO DE CONFIANZA PARA LA MEDIA\n")
+  cat("═══════════════════════════════════════════════════════\n")
+  cat("Tamaño de muestra:", n, "\n")
+  cat("Media:", round(media, 4), "\n")
+  cat("Desviación estándar:", round(desv_std, 4), "\n")
+  cat(sprintf("IC %.0f%%: [%.4f, %.4f]\n", confianza*100, ic_inferior, ic_superior))
+  cat("Margen de error: ±", round(margen_error, 4), "\n")
+  
+  return(invisible(resultado))
+}
+
+# Ejemplo de uso
+datos_prueba <- c(5.1, 5.3, 4.9, 5.2, 5.4, 5.0, 5.3, 5.1)
+resultado <- calcular_ic_media(datos_prueba, confianza = 0.95)</code></pre></div>
+                </div>

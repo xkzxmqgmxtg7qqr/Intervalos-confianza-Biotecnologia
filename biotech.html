@@ -1,0 +1,252 @@
+<div class="card">
+                <h2>🔬 Aplicación Integral en Biotecnología</h2>
+                
+                <h3>🧬 Caso de Estudio: Optimización de Producción de Enzimas</h3>
+                <div class="example-box">
+                    <h4>Contexto del Problema:</h4>
+                    <p>Una empresa biotecnológica desarrolla una amilasa industrial usando <em>Bacillus subtilis</em>. El departamento de I+D investiga si un nuevo medio de cultivo (Medio B) mejora la actividad enzimática comparado con el medio estándar (Medio A).</p>
+                    
+                    <h4>Objetivos:</h4>
+                    <ul>
+                        <li>Estimar la actividad enzimática media con cada medio (IC 95%)</li>
+                        <li>Comparar ambos medios y cuantificar la diferencia (IC 95%)</li>
+                        <li>Evaluar la viabilidad celular en el Medio B</li>
+                    </ul>
+                </div>
+                
+                <h3>📊 Datos Experimentales</h3>
+                <div class="r-box">
+                    <p><strong>Experimento 1:</strong> Actividad de amilasa (U/mL) después de 48h de fermentación</p>
+                    <ul>
+                        <li><strong>Medio A (control):</strong> 15 fermentaciones</li>
+                        <li><strong>Medio B (nuevo):</strong> 15 fermentaciones</li>
+                    </ul>
+                    
+                    <p><strong>Experimento 2:</strong> Viabilidad celular en Medio B</p>
+                    <ul>
+                        <li>250 células examinadas, 232 viables</li>
+                    </ul>
+                </div>
+                
+                <h3>💻 Análisis Completo en Python</h3>
+                <div class="code-block"><pre><code class="language-python">import numpy as np
+from scipy import stats
+import matplotlib.pyplot as plt
+
+# ============================================================
+# EXPERIMENTO 1: COMPARACIÓN DE MEDIOS
+# ============================================================
+
+# Datos de actividad enzimática (U/mL)
+medio_A = np.array([45.2, 47.1, 46.3, 48.0, 45.8, 47.5, 46.1, 47.8, 45.9, 
+                    47.2, 46.5, 47.9, 45.7, 47.3, 46.8])
+medio_B = np.array([52.1, 54.3, 53.2, 55.1, 52.8, 54.0, 53.5, 54.8, 52.5,
+                    54.2, 53.8, 54.6, 52.9, 54.4, 53.3])
+
+print("═"*70)
+print("ANÁLISIS DE PRODUCCIÓN DE AMILASA")
+print("═"*70)
+
+# IC para Medio A
+n_A = len(medio_A)
+media_A = np.mean(medio_A)
+sd_A = np.std(medio_A, ddof=1)
+se_A = sd_A / np.sqrt(n_A)
+ic_A = stats.t.interval(0.95, n_A-1, media_A, se_A)
+
+print(f"\nMedio A (Control):")
+print(f"  n = {n_A}")
+print(f"  Media = {media_A:.2f} U/mL")
+print(f"  SD = {sd_A:.2f} U/mL")
+print(f"  IC 95% = [{ic_A[0]:.2f}, {ic_A[1]:.2f}] U/mL")
+
+# IC para Medio B
+n_B = len(medio_B)
+media_B = np.mean(medio_B)
+sd_B = np.std(medio_B, ddof=1)
+se_B = sd_B / np.sqrt(n_B)
+ic_B = stats.t.interval(0.95, n_B-1, media_B, se_B)
+
+print(f"\nMedio B (Nuevo):")
+print(f"  n = {n_B}")
+print(f"  Media = {media_B:.2f} U/mL")
+print(f"  SD = {sd_B:.2f} U/mL")
+print(f"  IC 95% = [{ic_B[0]:.2f}, {ic_B[1]:.2f}] U/mL")
+
+# IC para diferencia
+t_result = stats.ttest_ind(medio_B, medio_A)
+diff_media = media_B - media_A
+se_diff = np.sqrt(sd_A**2/n_A + sd_B**2/n_B)
+gl_welch = (sd_A**2/n_A + sd_B**2/n_B)**2 / ((sd_A**2/n_A)**2/(n_A-1) + (sd_B**2/n_B)**2/(n_B-1))
+t_crit = stats.t.ppf(0.975, gl_welch)
+me_diff = t_crit * se_diff
+ic_diff = (diff_media - me_diff, diff_media + me_diff)
+
+print(f"\nDiferencia (B - A):")
+print(f"  Diferencia = {diff_media:.2f} U/mL")
+print(f"  IC 95% = [{ic_diff[0]:.2f}, {ic_diff[1]:.2f}] U/mL")
+print(f"  Incremento relativo = {(diff_media/media_A)*100:.1f}%")
+
+# ============================================================
+# EXPERIMENTO 2: VIABILIDAD CELULAR
+# ============================================================
+
+n_celulas = 250
+viables = 232
+p_hat = viables / n_celulas
+
+print(f"\n{'═'*70}")
+print("ANÁLISIS DE VIABILIDAD CELULAR EN MEDIO B")
+print("═"*70)
+print(f"\nCélulas examinadas: {n_celulas}")
+print(f"Células viables: {viables}")
+print(f"Proporción muestral: {p_hat:.4f} ({p_hat*100:.2f}%)")
+
+# IC para proporción
+z_crit = 1.96
+se_prop = np.sqrt(p_hat * (1-p_hat) / n_celulas)
+me_prop = z_crit * se_prop
+ic_prop = (p_hat - me_prop, p_hat + me_prop)
+
+print(f"IC 95% = [{ic_prop[0]:.4f}, {ic_prop[1]:.4f}]")
+print(f"En porcentaje = [{ic_prop[0]*100:.2f}%, {ic_prop[1]*100:.2f}%]")
+
+# ============================================================
+# VISUALIZACIÓN INTEGRADA
+# ============================================================
+
+fig = plt.figure(figsize=(15, 10))
+
+# Subplot 1: Comparación de medios
+ax1 = plt.subplot(2, 3, 1)
+bp = ax1.boxplot([medio_A, medio_B], labels=['Medio A', 'Medio B'],
+                  patch_artist=True)
+bp['boxes'][0].set_facecolor('#3498db')
+bp['boxes'][1].set_facecolor('#16a085')
+ax1.set_ylabel('Actividad (U/mL)', fontsize=12)
+ax1.set_title('Comparación de Actividad Enzimática', fontsize=14, fontweight='bold')
+ax1.grid(axis='y', alpha=0.3)
+
+# Subplot 2: IC para Medio A
+ax2 = plt.subplot(2, 3, 2)
+ax2.errorbar(1, media_A, yerr=(ic_A[1]-media_A), fmt='o', markersize=12,
+             color='#3498db', elinewidth=3, capsize=10, capthick=3)
+ax2.set_xlim(0.5, 1.5)
+ax2.set_ylabel('Actividad (U/mL)', fontsize=12)
+ax2.set_title('IC 95% - Medio A', fontsize=14, fontweight='bold')
+ax2.set_xticks([])
+ax2.grid(alpha=0.3)
+ax2.text(1.1, media_A, f'{media_A:.1f}', fontsize=11)
+
+# Subplot 3: IC para Medio B
+ax3 = plt.subplot(2, 3, 3)
+ax3.errorbar(1, media_B, yerr=(ic_B[1]-media_B), fmt='o', markersize=12,
+             color='#16a085', elinewidth=3, capsize=10, capthick=3)
+ax3.set_xlim(0.5, 1.5)
+ax3.set_ylabel('Actividad (U/mL)', fontsize=12)
+ax3.set_title('IC 95% - Medio B', fontsize=14, fontweight='bold')
+ax3.set_xticks([])
+ax3.grid(alpha=0.3)
+ax3.text(1.1, media_B, f'{media_B:.1f}', fontsize=11)
+
+# Subplot 4: IC para diferencia
+ax4 = plt.subplot(2, 3, 4)
+ax4.errorbar(1, diff_media, yerr=me_diff, fmt='o', markersize=15,
+             color='#e67e22', elinewidth=4, capsize=15, capthick=4)
+ax4.axhline(0, color='red', linestyle='--', linewidth=2, label='Diferencia = 0')
+ax4.set_xlim(0.5, 1.5)
+ax4.set_ylabel('Diferencia (U/mL)', fontsize=12)
+ax4.set_title('IC 95% para Diferencia (B-A)', fontsize=14, fontweight='bold')
+ax4.legend()
+ax4.set_xticks([])
+ax4.grid(alpha=0.3)
+
+# Subplot 5: Viabilidad
+ax5 = plt.subplot(2, 3, 5)
+categories = ['No viables', 'Viables']
+counts = [n_celulas-viables, viables]
+colors = ['#e74c3c', '#27ae60']
+ax5.bar(categories, counts, color=colors, alpha=0.7)
+ax5.set_ylabel('Número de células', fontsize=12)
+ax5.set_title('Viabilidad Celular', fontsize=14, fontweight='bold')
+ax5.grid(axis='y', alpha=0.3)
+
+# Subplot 6: IC para viabilidad
+ax6 = plt.subplot(2, 3, 6)
+ax6.errorbar(1, p_hat*100, yerr=(ic_prop[1]-p_hat)*100, fmt='o', markersize=15,
+             color='#27ae60', elinewidth=4, capsize=15, capthick=4)
+ax6.set_xlim(0.5, 1.5)
+ax6.set_ylim(88, 98)
+ax6.set_ylabel('Viabilidad (%)', fontsize=12)
+ax6.set_title('IC 95% para Viabilidad', fontsize=14, fontweight='bold')
+ax6.set_xticks([])
+ax6.grid(alpha=0.3)
+ax6.text(1.1, p_hat*100, f'{p_hat*100:.1f}%', fontsize=11)
+
+plt.tight_layout()
+plt.savefig('analisis_biotech_completo.png', dpi=300, bbox_inches='tight')
+plt.show()
+
+# ============================================================
+# CONCLUSIONES
+# ============================================================
+
+print(f"\n{'═'*70}")
+print("CONCLUSIONES Y RECOMENDACIONES")
+print("═"*70)
+print(f"\n1. ACTIVIDAD ENZIMÁTICA:")
+print(f"   • Medio A: {media_A:.2f} U/mL (IC: {ic_A[0]:.2f}-{ic_A[1]:.2f})")
+print(f"   • Medio B: {media_B:.2f} U/mL (IC: {ic_B[0]:.2f}-{ic_B[1]:.2f})")
+print(f"   • Incremento: +{diff_media:.2f} U/mL ({(diff_media/media_A)*100:.1f}%)")
+print(f"   ✓ CONCLUSIÓN: Medio B es significativamente mejor")
+
+print(f"\n2. VIABILIDAD CELULAR:")
+print(f"   • Viabilidad: {p_hat*100:.2f}% (IC: {ic_prop[0]*100:.2f}%-{ic_prop[1]*100:.2f}%)")
+print(f"   ✓ CONCLUSIÓN: Excelente viabilidad celular")
+
+print(f"\n3. RECOMENDACIÓN FINAL:")
+print(f"   ✓ Implementar Medio B para producción industrial")
+print(f"   ✓ Esperado incremento de productividad: ~{(diff_media/media_A)*100:.0f}%")
+print(f"   ✓ Mantener monitoreo de viabilidad celular > 90%")</code></pre></div>
+                
+                <h3>📈 Interpretación y Toma de Decisiones</h3>
+                <div class="r-box">
+                    <h4>Análisis de Resultados:</h4>
+                    <p><strong>1. Actividad Enzimática:</strong></p>
+                    <ul>
+                        <li>El Medio B muestra una actividad significativamente mayor (~15% de incremento)</li>
+                        <li>Los intervalos de confianza no se solapan, indicando diferencia real</li>
+                        <li>La diferencia es tanto estadística como prácticamente significativa</li>
+                    </ul>
+                    
+                    <p><strong>2. Viabilidad Celular:</strong></p>
+                    <ul>
+                        <li>La viabilidad > 90% es excelente para aplicaciones industriales</li>
+                        <li>El IC estrecho indica consistencia del proceso</li>
+                        <li>Cumple con estándares de la industria biotecnológica</li>
+                    </ul>
+                    
+                    <p><strong>3. Recomendación:</strong></p>
+                    <p>✓ <strong>Implementar el Medio B</strong> para la producción industrial, ya que:</p>
+                    <ul>
+                        <li>Aumenta significativamente la actividad enzimática</li>
+                        <li>Mantiene alta viabilidad celular</li>
+                        <li>Los intervalos de confianza proporcionan estimaciones precisas para planificación</li>
+                    </ul>
+                </div>
+                
+                <h3>💡 Aplicaciones Adicionales en Biotecnología</h3>
+                <table>
+                    <thead>
+                        <tr><th>Aplicación</th><th>Parámetro a Estimar</th><th>Tipo de IC</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Purificación de proteínas</td><td>Pureza media (%)</td><td>IC para media</td></tr>
+                        <tr><td>PCR cuantitativo</td><td>Concentración DNA</td><td>IC para media</td></tr>
+                        <tr><td>Ensayos de citotoxicidad</td><td>IC₅₀</td><td>IC para media</td></tr>
+                        <tr><td>Eficacia de vacunas</td><td>Tasa de respuesta inmune</td><td>IC para proporción</td></tr>
+                        <tr><td>Comparación de cepas</td><td>Diferencia en rendimiento</td><td>IC para diferencia</td></tr>
+                        <tr><td>Control de calidad</td><td>Tasa de contaminación</td><td>IC para proporción</td></tr>
+                    </tbody>
+                </table>
+            </div>

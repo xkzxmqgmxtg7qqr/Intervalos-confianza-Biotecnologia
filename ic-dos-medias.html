@@ -1,0 +1,47 @@
+<div class="card">
+                <h2>⚖️ IC para Diferencia de Dos Medias</h2>
+                
+                <h3>📐 Fórmulas</h3>
+                <div class="formula-box">
+                    <h4>Caso 1: Varianzas iguales (Pooled t-test)</h4>
+                    <p>\[IC = (\bar{x}_1 - \bar{x}_2) \pm t_{n_1+n_2-2,\alpha/2} \cdot s_p\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}\]</p>
+                    <p>Varianza combinada (pooled):</p>
+                    <p>\[s_p = \sqrt{\frac{(n_1-1)s_1^2 + (n_2-1)s_2^2}{n_1+n_2-2}}\]</p>
+                    
+                    <h4 style="margin-top:20px;">Caso 2: Varianzas diferentes (Welch t-test)</h4>
+                    <p>\[IC = (\bar{x}_1 - \bar{x}_2) \pm t_{\nu,\alpha/2} \cdot \sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}\]</p>
+                    <p>Grados de libertad de Welch:</p>
+                    <p>\[\nu = \frac{\left(\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}\right)^2}{\frac{(s_1^2/n_1)^2}{n_1-1} + \frac{(s_2^2/n_2)^2}{n_2-1}}\]</p>
+                </div>
+                
+                <h3>🧬 Ejemplo: Comparación de Medios de Cultivo</h3>
+                <div class="example-box">
+                    <h4>Contexto:</h4>
+                    <p>Se compara el crecimiento de microalgas (densidad óptica OD<sub>680</sub>) en dos medios de cultivo diferentes:</p>
+                    <ul>
+                        <li><strong>Medio A (control):</strong> n₁ = 12, x̄₁ = 0.85, s₁ = 0.12</li>
+                        <li><strong>Medio B (nuevo):</strong> n₂ = 15, x̄₂ = 0.95, s₂ = 0.15</li>
+                    </ul>
+                    <p><strong>Objetivo:</strong> IC 95% para la diferencia de medias (μ_B - μ_A)</p>
+                    
+                    <h4>Solución (Welch):</h4>
+                    <p><strong>Paso 1:</strong> Calcular diferencia de medias</p>
+                    <p>x̄₂ - x̄₁ = 0.95 - 0.85 = 0.10</p>
+                    
+                    <p><strong>Paso 2:</strong> Calcular SE</p>
+                    <p>\[SE = \sqrt{\frac{0.12^2}{12} + \frac{0.15^2}{15}} = \sqrt{0.0012 + 0.0015} = 0.052\]</p>
+                    
+                    <p><strong>Paso 3:</strong> Grados de libertad de Welch</p>
+                    <p>ν ≈ 24.3 → usar t<sub>24, 0.025</sub> = 2.064</p>
+                    
+                    <p><strong>Paso 4:</strong> Margen de error</p>
+                    <p>ME = 2.064 × 0.052 = 0.107</p>
+                    
+                    <p><strong>Paso 5:</strong> IC</p>
+                    <p><strong>IC 95% = [-0.007, 0.207]</strong></p>
+                    
+                    <h4>✅ Interpretación:</h4>
+                    <p>Con 95% de confianza, la diferencia en crecimiento (Medio B - Medio A) está entre -0.007 y 0.207 unidades de OD<sub>680</sub>.</p>
+                    <p><strong>Conclusión:</strong> Como el intervalo incluye el cero, no hay evidencia concluyente de que el Medio B sea mejor que el Medio A al 95% de confianza.</p>
+                </div>
+            </div>

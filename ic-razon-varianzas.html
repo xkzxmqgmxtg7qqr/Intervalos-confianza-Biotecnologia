@@ -1,0 +1,307 @@
+<div class="card">
+                <h2>📐 IC para Razón de Varianzas</h2>
+                
+                <h3>📐 Fórmula (Distribución F)</h3>
+                <div class="formula-box">
+                    <p>\[IC = \left[ \frac{s_1^2/s_2^2}{F_{n_1-1, n_2-1, \alpha/2}}, \frac{s_1^2/s_2^2}{F_{n_1-1, n_2-1, 1-\alpha/2}} \right]\]</p>
+                    <p>O equivalentemente:</p>
+                    <p>\[IC = \left[ \frac{s_1^2}{s_2^2} \cdot \frac{1}{F_{n_1-1, n_2-1, \alpha/2}}, \frac{s_1^2}{s_2^2} \cdot F_{n_2-1, n_1-1, \alpha/2} \right]\]</p>
+                    <p>Donde:</p>
+                    <ul>
+                        <li>\(s_1^2, s_2^2\) = Varianzas muestrales</li>
+                        <li>\(n_1, n_2\) = Tamaños de muestra</li>
+                        <li>F = Distribución F de Fisher</li>
+                    </ul>
+                    
+                    <h4>Interpretación de la Razón:</h4>
+                    <ul>
+                        <li>Si IC incluye 1: No hay diferencia significativa entre varianzas</li>
+                        <li>Si IC > 1: σ₁² > σ₂² (mayor variabilidad en grupo 1)</li>
+                        <li>Si IC < 1: σ₁² < σ₂² (menor variabilidad en grupo 1)</li>
+                    </ul>
+                    
+                    <h4>Supuestos:</h4>
+                    <ul>
+                        <li><strong>Normalidad estricta</strong> de ambas poblaciones</li>
+                        <li>Muestras independientes</li>
+                    </ul>
+                </div>
+                
+                <h3>🔬 Ejemplo 1: Precisión de Equipos de Medición</h3>
+                <div class="example-box">
+                    <h4>Contexto:</h4>
+                    <p>Un laboratorio de biotecnología evalúa la precisión (variabilidad) de dos espectrofotómetros midiendo la misma solución de proteína BSA (1 mg/mL) repetidamente:</p>
+                    <ul>
+                        <li><strong>Espectrofotómetro A:</strong> 15 mediciones, s²_A = 0.0025 (mg/mL)²</li>
+                        <li><strong>Espectrofotómetro B:</strong> 12 mediciones, s²_B = 0.0016 (mg/mL)²</li>
+                    </ul>
+                    <p><strong>Objetivo:</strong> Determinar si hay diferencia significativa en la precisión (IC 95% para σ²_A/σ²_B)</p>
+                    
+                    <h4>Solución Paso a Paso:</h4>
+                    <p><strong>Paso 1:</strong> Calcular razón de varianzas muestrales</p>
+                    <p>\[F_{obs} = \frac{s_A^2}{s_B^2} = \frac{0.0025}{0.0016} = 1.5625\]</p>
+                    
+                    <p><strong>Paso 2:</strong> Grados de libertad</p>
+                    <ul>
+                        <li>gl₁ = n_A - 1 = 14</li>
+                        <li>gl₂ = n_B - 1 = 11</li>
+                    </ul>
+                    
+                    <p><strong>Paso 3:</strong> Valores críticos de F</p>
+                    <p>F<sub>14, 11, 0.025</sub> = 3.09 (superior)</p>
+                    <p>F<sub>14, 11, 0.975</sub> = 1/F<sub>11, 14, 0.025</sub> = 1/3.21 = 0.312 (inferior)</p>
+                    
+                    <p><strong>Paso 4:</strong> Construir IC</p>
+                    <p>\[IC_{95\%} = \left[\frac{1.5625}{3.09}, 1.5625 \times \frac{1}{0.312}\right]\]</p>
+                    <p>\[IC_{95\%} = [0.506, 5.008]\]</p>
+                    
+                    <h4>✅ Interpretación:</h4>
+                    <p>Con 95% de confianza, la razón de varianzas poblacionales (σ²_A/σ²_B) está entre 0.506 y 5.008.</p>
+                    <p><strong>Conclusión:</strong> Como el intervalo incluye 1, <strong>no hay evidencia estadística de que un espectrofotómetro sea más preciso que el otro</strong>. Ambos equipos tienen precisión comparable.</p>
+                    <p><strong>Decisión práctica:</strong> Cualquiera de los dos equipos es adecuado para las mediciones del laboratorio.</p>
+                </div>
+                
+                <h3>🧪 Ejemplo 2: Reproducibilidad de Métodos de Cultivo</h3>
+                <div class="example-box">
+                    <h4>Contexto:</h4>
+                    <p>Se compara la reproducibilidad (consistencia) en el rendimiento celular de dos protocolos de cultivo de células CHO:</p>
+                    <ul>
+                        <li><strong>Protocolo A (convencional):</strong> n=20, s²=12.5 (×10⁶ células/mL)²</li>
+                        <li><strong>Protocolo B (optimizado):</strong> n=18, s²=6.8 (×10⁶ células/mL)²</li>
+                    </ul>
+                    
+                    <h4>Solución:</h4>
+                    <p>Razón observada: F_obs = 12.5/6.8 = 1.838</p>
+                    <p>gl: 19 y 17</p>
+                    <p>F<sub>19,17,0.025</sub> ≈ 2.62, F<sub>19,17,0.975</sub> ≈ 0.38</p>
+                    <p><strong>IC 95% = [0.70, 4.81]</strong></p>
+                    
+                    <h4>✅ Interpretación:</h4>
+                    <p>El IC incluye 1, por lo que no hay evidencia estadística de diferencia significativa en la variabilidad entre protocolos.</p>
+                    <p><strong>Aplicación:</strong> Ambos protocolos tienen reproducibilidad comparable, por lo que la elección puede basarse en otros criterios (costo, tiempo, rendimiento medio).</p>
+                </div>
+                
+                <h3>💻 Código Python para IC de Razón de Varianzas</h3>
+                <div class="code-block"><pre><code class="language-python">import numpy as np
+from scipy import stats
+
+# Datos de espectrofotómetros
+n1, s1_sq = 15, 0.0025  # Equipo A
+n2, s2_sq = 12, 0.0016  # Equipo B
+
+# Calcular razón de varianzas
+F_obs = s1_sq / s2_sq
+gl1 = n1 - 1
+gl2 = n2 - 1
+
+print("═"*60)
+print("IC PARA RAZÓN DE VARIANZAS")
+print("═"*60)
+print(f"\nEspectrofotómetro A:")
+print(f"  n = {n1}, s² = {s1_sq}")
+print(f"\nEspectrofotómetro B:")
+print(f"  n = {n2}, s² = {s2_sq}")
+print(f"\nRazón observada F = s²_A / s²_B = {F_obs:.4f}")
+
+# Calcular IC para razón de varianzas
+alpha = 0.05
+F_upper = stats.f.ppf(1 - alpha/2, gl1, gl2)
+F_lower = stats.f.ppf(alpha/2, gl1, gl2)
+
+ic_lower = F_obs / F_upper
+ic_upper = F_obs / F_lower
+
+print(f"\n{'═'*60}")
+print("INTERVALO DE CONFIANZA 95%")
+print("═"*60)
+print(f"Grados de libertad: ({gl1}, {gl2})")
+print(f"F_{gl1},{gl2},0.975 = {F_lower:.4f}")
+print(f"F_{gl1},{gl2},0.025 = {F_upper:.4f}")
+print(f"\nIC 95% para σ²_A/σ²_B = [{ic_lower:.3f}, {ic_upper:.3f}]")
+
+# Interpretación
+print(f"\n{'═'*60}")
+print("INTERPRETACIÓN")
+print("═"*60)
+if ic_lower > 1:
+    print("✓ Equipo A tiene significativamente MAYOR variabilidad")
+    print("  → Equipo B es más preciso")
+elif ic_upper < 1:
+    print("✓ Equipo B tiene significativamente MAYOR variabilidad")
+    print("  → Equipo A es más preciso")
+else:
+    print("⚠ No hay diferencia significativa en precisión")
+    print("  (el IC incluye 1)")
+
+# Visualización
+import matplotlib.pyplot as plt
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+
+# Gráfico 1: Distribución F
+x = np.linspace(0, 6, 1000)
+y = stats.f.pdf(x, gl1, gl2)
+ax1.plot(x, y, 'b-', linewidth=2, label=f'F({gl1},{gl2})')
+ax1.axvline(F_obs, color='red', linestyle='--', linewidth=2, label=f'F_obs = {F_obs:.3f}')
+ax1.axvline(ic_lower, color='orange', linestyle=':', linewidth=2, label='IC 95%')
+ax1.axvline(ic_upper, color='orange', linestyle=':', linewidth=2)
+ax1.axvline(1, color='green', linestyle='-', linewidth=1, alpha=0.5, label='F = 1')
+ax1.set_xlabel('F = s²_A / s²_B', fontsize=12)
+ax1.set_ylabel('Densidad', fontsize=12)
+ax1.set_title('Distribución F y IC', fontsize=14, fontweight='bold')
+ax1.legend()
+ax1.grid(alpha=0.3)
+
+# Gráfico 2: IC visualizado
+ax2.errorbar(1, F_obs, 
+             yerr=[[F_obs-ic_lower], [ic_upper-F_obs]],
+             fmt='o', markersize=15, color='#16a085',
+             elinewidth=4, capsize=15, capthick=4)
+ax2.axhline(1, color='red', linestyle='--', linewidth=2, label='Razón = 1')
+ax2.set_xlim(0.5, 1.5)
+ax2.set_ylim(0, max(ic_upper, 2) * 1.1)
+ax2.set_ylabel('Razón σ²_A / σ²_B', fontsize=12)
+ax2.set_title('IC 95% para Razón de Varianzas', fontsize=14, fontweight='bold')
+ax2.legend()
+ax2.grid(alpha=0.3)
+ax2.set_xticks([])
+
+plt.tight_layout()
+plt.show()</code></pre></div>
+                
+                <h3>📊 Código R para IC de Razón de Varianzas</h3>
+                <div class="code-block"><pre><code class="language-r"># Datos de espectrofotómetros
+# Generamos datos de ejemplo con las varianzas especificadas
+set.seed(123)
+equipo_A <- rnorm(15, mean=1.0, sd=sqrt(0.0025))
+equipo_B <- rnorm(12, mean=1.0, sd=sqrt(0.0016))
+
+cat("═══════════════════════════════════════════════════════\n")
+cat("IC PARA RAZÓN DE VARIANZAS\n")
+cat("═══════════════════════════════════════════════════════\n\n")
+
+# Estadísticas
+cat("Espectrofotómetro A:\n")
+cat("  n =", length(equipo_A), "\n")
+cat("  s² =", var(equipo_A), "(mg/mL)²\n")
+cat("  s =", sd(equipo_A), "mg/mL\n\n")
+
+cat("Espectrofotómetro B:\n")
+cat("  n =", length(equipo_B), "\n")
+cat("  s² =", var(equipo_B), "(mg/mL)²\n")
+cat("  s =", sd(equipo_B), "mg/mL\n\n")
+
+# Test F para razón de varianzas
+resultado <- var.test(equipo_A, equipo_B, conf.level = 0.95)
+
+cat("═══════════════════════════════════════════════════════\n")
+cat("INTERVALO DE CONFIANZA 95%\n")
+cat("═══════════════════════════════════════════════════════\n")
+cat("Razón de varianzas (A/B):", resultado$estimate, "\n")
+cat("IC 95%: [", resultado$conf.int[1], ",", resultado$conf.int[2], "]\n")
+cat("Estadístico F:", resultado$statistic, "\n")
+cat("p-valor:", resultado$p.value, "\n\n")
+
+# Interpretación
+cat("═══════════════════════════════════════════════════════\n")
+cat("INTERPRETACIÓN\n")
+cat("═══════════════════════════════════════════════════════\n")
+
+if (resultado$conf.int[1] > 1) {
+  cat("✓ Equipo A tiene significativamente MAYOR variabilidad\n")
+  cat("  → Equipo B es más preciso\n")
+} else if (resultado$conf.int[2] < 1) {
+  cat("✓ Equipo B tiene significativamente MAYOR variabilidad\n")
+  cat("  → Equipo A es más preciso\n")
+} else {
+  cat("⚠ No hay diferencia significativa en precisión\n")
+  cat("  (el IC incluye 1)\n")
+}
+
+# Visualización
+par(mfrow = c(1, 3))
+
+# Boxplots comparativos
+boxplot(equipo_A, equipo_B,
+        names = c("Equipo A", "Equipo B"),
+        main = "Comparación de Variabilidad",
+        ylab = "Concentración (mg/mL)",
+        col = c("#3498db", "#16a085"),
+        notch = TRUE)
+
+# Gráficos de dispersión
+plot(rep(1, length(equipo_A)), equipo_A,
+     xlim = c(0.5, 2.5),
+     ylim = range(c(equipo_A, equipo_B)),
+     col = "#3498db",
+     pch = 19,
+     cex = 1.5,
+     xlab = "",
+     ylab = "Concentración (mg/mL)",
+     main = "Dispersión de Mediciones",
+     xaxt = "n")
+points(rep(2, length(equipo_B)), equipo_B,
+       col = "#16a085",
+       pch = 19,
+       cex = 1.5)
+axis(1, at = c(1, 2), labels = c("Equipo A", "Equipo B"))
+abline(h = mean(c(equipo_A, equipo_B)), col = "red", lty = 2)
+
+# IC para razón
+F_obs <- resultado$estimate
+plot(1, F_obs,
+     xlim = c(0.5, 1.5),
+     ylim = c(0, max(resultado$conf.int[2], 2) * 1.1),
+     pch = 19,
+     cex = 3,
+     col = "#16a085",
+     main = "IC 95% para Razón σ²_A/σ²_B",
+     ylab = "Razón de Varianzas",
+     xlab = "",
+     xaxt = "n")
+arrows(1, resultado$conf.int[1],
+       1, resultado$conf.int[2],
+       angle = 90,
+       code = 3,
+       length = 0.15,
+       lwd = 3,
+       col = "#16a085")
+abline(h = 1, col = "red", lty = 2, lwd = 2)
+text(1.1, F_obs, sprintf("%.2f", F_obs), pos = 4, font = 2)
+
+par(mfrow = c(1, 1))</code></pre></div>
+                
+                <h3>🔍 Aplicaciones en Biotecnología</h3>
+                <table>
+                    <thead>
+                        <tr><th>Aplicación</th><th>Comparación</th><th>Decisión basada en IC</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Control de calidad</td>
+                            <td>Precisión de lotes</td>
+                            <td>Identificar lotes con alta variabilidad</td>
+                        </tr>
+                        <tr>
+                            <td>Validación de métodos</td>
+                            <td>Reproducibilidad entre técnicas</td>
+                            <td>Seleccionar método más consistente</td>
+                        </tr>
+                        <tr>
+                            <td>Comparación de equipos</td>
+                            <td>Precisión de instrumentos</td>
+                            <td>Calibración o reemplazo de equipo</td>
+                        </tr>
+                        <tr>
+                            <td>Optimización de procesos</td>
+                            <td>Estabilidad de rendimientos</td>
+                            <td>Evaluar mejoras en consistencia</td>
+                        </tr>
+                        <tr>
+                            <td>Estudios de estabilidad</td>
+                            <td>Variabilidad temporal</td>
+                            <td>Determinar vida útil del producto</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>

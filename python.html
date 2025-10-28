@@ -1,0 +1,342 @@
+<div class="card">
+                <h2>🐍 Intervalos de Confianza con Python</h2>
+                
+                <h3>🔧 Configuración Inicial</h3>
+                <div class="code-block"><pre><code class="language-python"># Instalar librerías necesarias
+# pip install numpy scipy matplotlib pandas
+
+import numpy as np
+from scipy import stats
+import matplotlib.pyplot as plt
+import pandas as pd</code></pre></div>
+                
+                <h3>📊 IC para la Media de Una Población</h3>
+                <div class="example-box">
+                    <h4>Ejemplo: Concentración de Proteína</h4>
+                    <div class="code-block"><pre><code class="language-python"># ============================================================
+# IC PARA UNA MEDIA (σ desconocida, distribución t)
+# ============================================================
+
+# Datos: Concentración de insulina recombinante (mg/mL) en 20 lotes
+concentracion = np.array([5.1, 5.3, 4.9, 5.2, 5.4, 5.0, 5.3, 5.1, 5.2, 5.4,
+                          5.0, 5.3, 5.1, 5.2, 5.5, 5.0, 5.4, 5.2, 5.1, 5.3])
+
+# Estadísticas descriptivas
+n = len(concentracion)
+media = np.mean(concentracion)
+desv_std = np.std(concentracion, ddof=1)  # ddof=1 para muestra
+error_std = desv_std / np.sqrt(n)
+
+print("═"*60)
+print("ESTADÍSTICAS DESCRIPTIVAS")
+print("═"*60)
+print(f"Tamaño de muestra: {n}")
+print(f"Media: {media:.3f} mg/mL")
+print(f"Desviación estándar: {desv_std:.3f} mg/mL")
+print(f"Error estándar: {error_std:.3f} mg/mL")
+
+# Calcular IC 95% usando scipy
+confianza = 0.95
+gl = n - 1
+ic = stats.t.interval(confidence=confianza,
+                      df=gl,
+                      loc=media,
+                      scale=error_std)
+
+print(f"\n{'═'*60}")
+print(f"INTERVALO DE CONFIANZA 95%")
+print(f"{'═'*60}")
+print(f"IC 95% = [{ic[0]:.3f}, {ic[1]:.3f}] mg/mL")
+print(f"Margen de error = ±{(ic[1]-ic[0])/2:.3f} mg/mL")
+
+# Visualización
+plt.figure(figsize=(12, 5))
+
+# Subplot 1: Distribución de datos
+plt.subplot(1, 2, 1)
+plt.hist(concentracion, bins=8, color='#16a085', alpha=0.7, edgecolor='black')
+plt.axvline(media, color='red', linestyle='--', linewidth=2, label=f'Media = {media:.3f}')
+plt.axvline(ic[0], color='orange', linestyle=':', linewidth=2, label='IC 95%')
+plt.axvline(ic[1], color='orange', linestyle=':', linewidth=2)
+plt.xlabel('Concentración (mg/mL)', fontsize=12)
+plt.ylabel('Frecuencia', fontsize=12)
+plt.title('Distribución de Concentraciones', fontsize=14, fontweight='bold')
+plt.legend()
+plt.grid(alpha=0.3)
+
+# Subplot 2: IC visualization
+plt.subplot(1, 2, 2)
+plt.errorbar(1, media, yerr=(ic[1]-media), 
+             fmt='o', markersize=10, color='#16a085',
+             elinewidth=3, capsize=10, capthick=3)
+plt.xlim(0.5, 1.5)
+plt.ylim(ic[0]-0.2, ic[1]+0.2)
+plt.ylabel('Concentración (mg/mL)', fontsize=12)
+plt.title('Intervalo de Confianza 95%', fontsize=14, fontweight='bold')
+plt.axhline(media, color='red', linestyle='--', alpha=0.5)
+plt.text(1.05, media, f'x̄ = {media:.3f}', fontsize=12)
+plt.grid(alpha=0.3)
+plt.xticks([])
+
+plt.tight_layout()
+plt.show()
+
+# Interpretación automática
+print(f"\n{'═'*60}")
+print("INTERPRETACIÓN")
+print(f"{'═'*60}")
+print(f"Con {int(confianza*100)}% de confianza, la concentración media")
+print(f"poblacional de insulina está entre {ic[0]:.3f} y {ic[1]:.3f} mg/mL.")</code></pre></div>
+                </div>
+                
+                <h3>📈 IC para una Proporción</h3>
+                <div class="example-box">
+                    <h4>Ejemplo: Viabilidad Celular</h4>
+                    <div class="code-block"><pre><code class="language-python"># ============================================================
+# IC PARA UNA PROPORCIÓN
+# ============================================================
+
+# Datos: Viabilidad celular
+n = 200  # Células examinadas
+x = 184  # Células viables
+p_hat = x / n
+
+print("═"*60)
+print("INTERVALO DE CONFIANZA PARA UNA PROPORCIÓN")
+print("═"*60)
+print(f"n = {n} células examinadas")
+print(f"x = {x} células viables")
+print(f"p̂ = {p_hat:.4f} ({p_hat*100:.2f}%)")
+
+# Verificar condiciones
+print(f"\nVerificación de condiciones:")
+print(f"  n·p̂ = {n*p_hat:.1f} {'≥' if n*p_hat >= 10 else '<'} 10")
+print(f"  n·(1-p̂) = {n*(1-p_hat):.1f} {'≥' if n*(1-p_hat) >= 10 else '<'} 10")
+
+# Calcular IC usando método de Wilson (más robusto)
+from statsmodels.stats.proportion import proportion_confint
+
+ic_wilson = proportion_confint(x, n, alpha=0.05, method='wilson')
+
+print(f"\nIC 95% (método de Wilson):")
+print(f"  [{ic_wilson[0]:.4f}, {ic_wilson[1]:.4f}]")
+print(f"  [{ic_wilson[0]*100:.2f}%, {ic_wilson[1]*100:.2f}%]")
+
+# Método tradicional (normal)
+z_crit = stats.norm.ppf(0.975)  # 1.96
+se = np.sqrt(p_hat * (1-p_hat) / n)
+me = z_crit * se
+ic_normal = (p_hat - me, p_hat + me)
+
+print(f"\nIC 95% (método normal):")
+print(f"  [{ic_normal[0]:.4f}, {ic_normal[1]:.4f}]")
+print(f"  [{ic_normal[0]*100:.2f}%, {ic_normal[1]*100:.2f}%]")
+
+# Visualización
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+
+# Gráfico 1: Proporción con IC
+categories = ['No viables', 'Viables']
+counts = [n-x, x]
+colors = ['#e74c3c', '#16a085']
+ax1.bar(categories, counts, color=colors, alpha=0.7, edgecolor='black')
+ax1.set_ylabel('Número de células', fontsize=12)
+ax1.set_title('Distribución de Viabilidad Celular', fontsize=14, fontweight='bold')
+ax1.grid(axis='y', alpha=0.3)
+
+# Gráfico 2: IC para la proporción
+ax2.errorbar(1, p_hat*100, yerr=(ic_wilson[1]-p_hat)*100,
+             fmt='o', markersize=15, color='#16a085',
+             elinewidth=4, capsize=15, capthick=4)
+ax2.axhline(p_hat*100, color='red', linestyle='--', alpha=0.5)
+ax2.set_xlim(0.5, 1.5)
+ax2.set_ylim(80, 100)
+ax2.set_ylabel('Viabilidad (%)', fontsize=12)
+ax2.set_title(f'IC 95% para Viabilidad', fontsize=14, fontweight='bold')
+ax2.text(1.05, p_hat*100, f'{p_hat*100:.1f}%', fontsize=12)
+ax2.grid(alpha=0.3)
+ax2.set_xticks([])
+
+plt.tight_layout()
+plt.show()</code></pre></div>
+                </div>
+                
+                <h3>⚖️ IC para Diferencia de Dos Medias</h3>
+                <div class="example-box">
+                    <h4>Ejemplo: Comparación de Medios de Cultivo</h4>
+                    <div class="code-block"><pre><code class="language-python"># ============================================================
+# IC PARA DIFERENCIA DE DOS MEDIAS INDEPENDIENTES
+# ============================================================
+
+# Datos: Crecimiento de microalgas en dos medios (OD680)
+medio_A = np.array([0.82, 0.88, 0.85, 0.90, 0.84, 0.86, 0.83, 0.87, 0.85, 0.89, 0.84, 0.86])
+medio_B = np.array([0.92, 0.98, 0.95, 0.93, 0.96, 0.94, 0.97, 0.91, 0.95, 0.98, 0.92, 0.94, 0.96, 0.95, 0.93])
+
+print("═"*60)
+print("COMPARACIÓN DE DOS MEDIOS DE CULTIVO")
+print("═"*60)
+
+# Estadísticas de cada grupo
+print("\nMedio A (Control):")
+print(f"  n = {len(medio_A)}")
+print(f"  Media = {np.mean(medio_A):.3f} OD680")
+print(f"  SD = {np.std(medio_A, ddof=1):.3f}")
+
+print("\nMedio B (Nuevo):")
+print(f"  n = {len(medio_B)}")
+print(f"  Media = {np.mean(medio_B):.3f} OD680")
+print(f"  SD = {np.std(medio_B, ddof=1):.3f}")
+
+# Prueba de Levene para igualdad de varianzas
+stat_levene, p_levene = stats.levene(medio_A, medio_B)
+print(f"\nTest de Levene para igualdad de varianzas:")
+print(f"  Estadístico = {stat_levene:.3f}")
+print(f"  p-valor = {p_levene:.3f}")
+
+if p_levene > 0.05:
+    print("  → Varianzas iguales (usar pooled t-test)")
+    equal_var = True
+else:
+    print("  → Varianzas diferentes (usar Welch t-test)")
+    equal_var = False
+
+# Calcular IC para la diferencia de medias
+from scipy.stats import ttest_ind
+
+# ttest_ind devuelve IC directamente
+resultado = ttest_ind(medio_B, medio_A, equal_var=equal_var)
+
+# Calcular IC manualmente para mostrar el proceso
+media_diff = np.mean(medio_B) - np.mean(medio_A)
+n1, n2 = len(medio_B), len(medio_A)
+s1, s2 = np.std(medio_B, ddof=1), np.std(medio_A, ddof=1)
+
+if equal_var:
+    # Varianza pooled
+    sp = np.sqrt(((n1-1)*s1**2 + (n2-1)*s2**2) / (n1+n2-2))
+    se_diff = sp * np.sqrt(1/n1 + 1/n2)
+    gl = n1 + n2 - 2
+else:
+    # Welch (varianzas diferentes)
+    se_diff = np.sqrt(s1**2/n1 + s2**2/n2)
+    gl = (s1**2/n1 + s2**2/n2)**2 / ((s1**2/n1)**2/(n1-1) + (s2**2/n2)**2/(n2-1))
+
+t_crit = stats.t.ppf(0.975, gl)
+me = t_crit * se_diff
+ic = (media_diff - me, media_diff + me)
+
+print(f"\n{'═'*60}")
+print("INTERVALO DE CONFIANZA 95%")
+print(f"{'═'*60}")
+print(f"Diferencia de medias (B - A) = {media_diff:.3f} OD680")
+print(f"Error estándar = {se_diff:.3f}")
+print(f"Grados de libertad = {gl:.1f}")
+print(f"Valor crítico t = {t_crit:.3f}")
+print(f"IC 95% = [{ic[0]:.3f}, {ic[1]:.3f}] OD680")
+
+# Interpretación
+print(f"\n{'═'*60}")
+print("INTERPRETACIÓN")
+print(f"{'═'*60}")
+if ic[0] > 0:
+    print(f"✓ El Medio B es significativamente MEJOR que el Medio A")
+    print(f"  (todo el IC está por encima de cero)")
+elif ic[1] < 0:
+    print(f"✗ El Medio A es significativamente MEJOR que el Medio B")
+    print(f"  (todo el IC está por debajo de cero)")
+else:
+    print(f"⚠ No hay diferencia significativa entre medios")
+    print(f"  (el IC incluye el cero)")
+
+# Visualización
+fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+
+# Gráfico 1: Boxplots comparativos
+datos_combinados = [medio_A, medio_B]
+axes[0].boxplot(datos_combinados, labels=['Medio A', 'Medio B'],
+                patch_artist=True,
+                boxprops=dict(facecolor='lightblue', alpha=0.7),
+                medianprops=dict(color='red', linewidth=2))
+axes[0].set_ylabel('OD680', fontsize=12)
+axes[0].set_title('Comparación de Crecimiento', fontsize=14, fontweight='bold')
+axes[0].grid(axis='y', alpha=0.3)
+
+# Gráfico 2: Distribuciones superpuestas
+axes[1].hist(medio_A, bins=6, alpha=0.5, color='blue', label='Medio A', edgecolor='black')
+axes[1].hist(medio_B, bins=6, alpha=0.5, color='green', label='Medio B', edgecolor='black')
+axes[1].set_xlabel('OD680', fontsize=12)
+axes[1].set_ylabel('Frecuencia', fontsize=12)
+axes[1].set_title('Distribuciones Superpuestas', fontsize=14, fontweight='bold')
+axes[1].legend()
+axes[1].grid(alpha=0.3)
+
+# Gráfico 3: IC para la diferencia
+axes[2].errorbar(1, media_diff, yerr=me,
+                 fmt='o', markersize=15, color='#16a085',
+                 elinewidth=4, capsize=15, capthick=4)
+axes[2].axhline(0, color='red', linestyle='--', linewidth=2, label='Diferencia = 0')
+axes[2].axhline(media_diff, color='gray', linestyle=':', alpha=0.5)
+axes[2].set_xlim(0.5, 1.5)
+axes[2].set_ylabel('Diferencia (Medio B - Medio A)', fontsize=12)
+axes[2].set_title('IC 95% para Diferencia', fontsize=14, fontweight='bold')
+axes[2].legend()
+axes[2].grid(alpha=0.3)
+axes[2].set_xticks([])
+
+plt.tight_layout()
+plt.show()</code></pre></div>
+                </div>
+                
+                <h3>📦 Función Reutilizable para ICs</h3>
+                <div class="code-block"><pre><code class="language-python"># ============================================================
+# FUNCIÓN COMPLETA PARA CALCULAR IC DE UNA MEDIA
+# ============================================================
+
+def intervalo_confianza_media(datos, confianza=0.95):
+    """
+    Calcula el intervalo de confianza para la media usando distribución t.
+    
+    Parámetros:
+    -----------
+    datos : array-like
+        Vector de datos numéricos
+    confianza : float
+        Nivel de confianza (default: 0.95)
+    
+    Retorna:
+    --------
+    dict con claves:
+        'media', 'desv_std', 'n', 'ic', 'margen_error'
+    """
+    datos = np.array(datos)
+    n = len(datos)
+    media = np.mean(datos)
+    desv_std = np.std(datos, ddof=1)
+    error_std = desv_std / np.sqrt(n)
+    
+    # Calcular IC usando distribución t
+    ic = stats.t.interval(confidence=confianza,
+                          df=n-1,
+                          loc=media,
+                          scale=error_std)
+    
+    me = (ic[1] - ic[0]) / 2
+    
+    return {
+        'media': media,
+        'desv_std': desv_std,
+        'n': n,
+        'ic': ic,
+        'margen_error': me,
+        'nivel_confianza': confianza
+    }
+
+
+# Ejemplo de uso
+datos_ejemplo = [5.1, 5.3, 4.9, 5.2, 5.4, 5.0, 5.3, 5.1]
+resultado = intervalo_confianza_media(datos_ejemplo, confianza=0.95)
+
+print(f"Media: {resultado['media']:.3f}")
+print(f"IC 95%: [{resultado['ic'][0]:.3f}, {resultado['ic'][1]:.3f}]")
+print(f"Margen de error: ±{resultado['margen_error']:.3f}")</code></pre></div>
+            </div>

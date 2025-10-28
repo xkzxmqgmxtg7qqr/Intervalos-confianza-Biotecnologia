@@ -1,0 +1,298 @@
+<div class="card">
+    <h2>🧮 Calculadora de Intervalos de Confianza</h2>
+    <p>Selecciona el tipo de intervalo de confianza que deseas calcular:</p>
+    
+    <div style="margin: 20px 0;">
+        <label for="tipoIC" style="font-weight: bold; font-size: 1.1em;">Tipo de IC:</label>
+        <select id="tipoIC" onchange="cambiarTipoIC()" class="calc-select">
+            <optgroup label="🔵 Una Población">
+                <option value="una-media">IC para Una Media (σ desconocida)</option>
+                <option value="una-media-sigma">IC para Una Media (σ conocida)</option>
+                <option value="una-proporcion">IC para Una Proporción</option>
+                <option value="una-varianza">IC para Una Varianza</option>
+            </optgroup>
+            <optgroup label="🟢 Dos Poblaciones">
+                <option value="dos-medias">IC para Diferencia de Dos Medias</option>
+                <option value="medias-pareadas">IC para Medias Pareadas</option>
+                <option value="dos-proporciones">IC para Diferencia de Dos Proporciones</option>
+                <option value="razon-varianzas">IC para Razón de Varianzas</option>
+            </optgroup>
+        </select>
+    </div>
+    
+    <!-- CALCULADORA: IC PARA UNA MEDIA -->
+    <div id="calc-una-media" class="calc-section">
+        <h3>📊 IC para Una Media</h3>
+        <div class="r-box">
+            <div class="grid-2cols">
+                <div>
+                    <label>Tamaño de muestra (n):</label>
+                    <input type="number" id="n_media" value="15" min="2" class="calc-input">
+                </div>
+                <div>
+                    <label>Media muestral (x̄):</label>
+                    <input type="number" id="xbar_media" value="4.2" step="0.01" class="calc-input">
+                </div>
+                <div>
+                    <label>Desviación estándar (s):</label>
+                    <input type="number" id="s_media" value="0.6" step="0.01" min="0" class="calc-input">
+                </div>
+                <div>
+                    <label>Nivel de confianza (%):</label>
+                    <select id="confianza_media" class="calc-input">
+                        <option value="0.90">90%</option>
+                        <option value="0.95" selected>95%</option>
+                        <option value="0.99">99%</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="calcularICMedia()" class="btn">Calcular IC</button>
+        </div>
+        <div id="resultado-una-media" class="result-box" style="display:none;"></div>
+    </div>
+    
+    <!-- CALCULADORA: IC PARA UNA MEDIA (SIGMA CONOCIDA) -->
+    <div id="calc-una-media-sigma" class="calc-section" style="display:none;">
+        <h3>📊 IC para Una Media (σ conocida)</h3>
+        <div class="r-box">
+            <div class="grid-2cols">
+                <div>
+                    <label>Tamaño de muestra (n):</label>
+                    <input type="number" id="n_media_sigma" value="30" min="1" class="calc-input">
+                </div>
+                <div>
+                    <label>Media muestral (x̄):</label>
+                    <input type="number" id="xbar_media_sigma" value="5.5" step="0.01" class="calc-input">
+                </div>
+                <div>
+                    <label>Desviación estándar poblacional (σ):</label>
+                    <input type="number" id="sigma_media" value="1.2" step="0.01" min="0" class="calc-input">
+                </div>
+                <div>
+                    <label>Nivel de confianza (%):</label>
+                    <select id="confianza_media_sigma" class="calc-input">
+                        <option value="0.90">90%</option>
+                        <option value="0.95" selected>95%</option>
+                        <option value="0.99">99%</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="calcularICMediaSigmaConocida()" class="btn">Calcular IC</button>
+        </div>
+        <div id="resultado-una-media-sigma" class="result-box" style="display:none;"></div>
+    </div>
+    
+    <!-- CALCULADORA: IC PARA UNA PROPORCIÓN -->
+    <div id="calc-una-proporcion" class="calc-section" style="display:none;">
+        <h3>📈 IC para Una Proporción</h3>
+        <div class="r-box">
+            <div class="grid-2cols">
+                <div>
+                    <label>Tamaño de muestra (n):</label>
+                    <input type="number" id="n_prop" value="200" min="30" class="calc-input">
+                </div>
+                <div>
+                    <label>Número de éxitos (x):</label>
+                    <input type="number" id="x_prop" value="184" min="0" class="calc-input">
+                </div>
+                <div>
+                    <label>Nivel de confianza (%):</label>
+                    <select id="confianza_prop" class="calc-input">
+                        <option value="0.90">90%</option>
+                        <option value="0.95" selected>95%</option>
+                        <option value="0.99">99%</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="calcularICProporcion()" class="btn">Calcular IC</button>
+        </div>
+        <div id="resultado-una-proporcion" class="result-box" style="display:none;"></div>
+    </div>
+    
+    <!-- CALCULADORA: IC PARA UNA VARIANZA -->
+    <div id="calc-una-varianza" class="calc-section" style="display:none;">
+        <h3>📏 IC para Una Varianza</h3>
+        <div class="r-box">
+            <div class="grid-2cols">
+                <div>
+                    <label>Tamaño de muestra (n):</label>
+                    <input type="number" id="n_varianza" value="20" min="3" class="calc-input">
+                </div>
+                <div>
+                    <label>Varianza muestral (s²):</label>
+                    <input type="number" id="s2_varianza" value="0.0036" step="0.0001" min="0" class="calc-input">
+                </div>
+                <div>
+                    <label>Nivel de confianza (%):</label>
+                    <select id="confianza_varianza" class="calc-input">
+                        <option value="0.90">90%</option>
+                        <option value="0.95" selected>95%</option>
+                        <option value="0.99">99%</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="calcularICVarianza()" class="btn">Calcular IC</button>
+        </div>
+        <div id="resultado-una-varianza" class="result-box" style="display:none;"></div>
+    </div>
+    
+    <!-- CALCULADORA: IC PARA DOS MEDIAS -->
+    <div id="calc-dos-medias" class="calc-section" style="display:none;">
+        <h3>⚖️ IC para Diferencia de Dos Medias</h3>
+        <div class="r-box">
+            <div class="grid-2cols">
+                <div style="grid-column: 1 / -1; background: #e3f2fd; padding: 10px; border-radius: 5px;">
+                    <strong>Grupo 1:</strong>
+                </div>
+                <div>
+                    <label>n₁:</label>
+                    <input type="number" id="n1_medias" value="12" min="2" class="calc-input">
+                </div>
+                <div>
+                    <label>x̄₁:</label>
+                    <input type="number" id="xbar1_medias" value="0.85" step="0.01" class="calc-input">
+                </div>
+                <div>
+                    <label>s₁:</label>
+                    <input type="number" id="s1_medias" value="0.12" step="0.01" min="0" class="calc-input">
+                </div>
+                <div style="grid-column: 1 / -1; background: #e8f5e9; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                    <strong>Grupo 2:</strong>
+                </div>
+                <div>
+                    <label>n₂:</label>
+                    <input type="number" id="n2_medias" value="15" min="2" class="calc-input">
+                </div>
+                <div>
+                    <label>x̄₂:</label>
+                    <input type="number" id="xbar2_medias" value="0.95" step="0.01" class="calc-input">
+                </div>
+                <div>
+                    <label>s₂:</label>
+                    <input type="number" id="s2_medias" value="0.15" step="0.01" min="0" class="calc-input">
+                </div>
+                <div>
+                    <label>Nivel de confianza (%):</label>
+                    <select id="confianza_dosmedias" class="calc-input">
+                        <option value="0.90">90%</option>
+                        <option value="0.95" selected>95%</option>
+                        <option value="0.99">99%</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="calcularICDosMedias()" class="btn">Calcular IC</button>
+        </div>
+        <div id="resultado-dos-medias" class="result-box" style="display:none;"></div>
+    </div>
+    
+    <!-- CALCULADORA: IC PARA MEDIAS PAREADAS -->
+    <div id="calc-medias-pareadas" class="calc-section" style="display:none;">
+        <h3>🔄 IC para Diferencia de Medias Pareadas</h3>
+        <p style="margin: 10px 0; color: #555;">Ingresa los datos pareados (antes-después, o pares relacionados):</p>
+        <div class="r-box">
+            <div style="margin: 20px 0;">
+                <label style="font-weight: bold;">Datos Grupo 1 (separados por comas):</label>
+                <input type="text" id="datos1_pareadas" value="5.2, 5.4, 5.1, 5.3, 5.5, 5.0, 5.4, 5.2, 5.3, 5.1" class="calc-input" placeholder="Ej: 5.2, 5.4, 5.1, 5.3">
+            </div>
+            <div style="margin: 20px 0;">
+                <label style="font-weight: bold;">Datos Grupo 2 (separados por comas):</label>
+                <input type="text" id="datos2_pareadas" value="5.8, 6.0, 5.7, 5.9, 6.1, 5.6, 6.0, 5.8, 5.9, 5.7" class="calc-input" placeholder="Ej: 5.8, 6.0, 5.7, 5.9">
+            </div>
+            <div class="grid-2cols">
+                <div>
+                    <label>Nivel de confianza (%):</label>
+                    <select id="confianza_pareadas" class="calc-input">
+                        <option value="0.90">90%</option>
+                        <option value="0.95" selected>95%</option>
+                        <option value="0.99">99%</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="calcularICMediasPareadas()" class="btn">Calcular IC</button>
+        </div>
+        <div id="resultado-medias-pareadas" class="result-box" style="display:none;"></div>
+    </div>
+    
+    <!-- CALCULADORA: IC PARA DOS PROPORCIONES -->
+    <div id="calc-dos-proporciones" class="calc-section" style="display:none;">
+        <h3>📉 IC para Diferencia de Dos Proporciones</h3>
+        <div class="r-box">
+            <div class="grid-2cols">
+                <div style="grid-column: 1 / -1; background: #e3f2fd; padding: 10px; border-radius: 5px;">
+                    <strong>Grupo 1:</strong>
+                </div>
+                <div>
+                    <label>n₁ (tamaño muestra):</label>
+                    <input type="number" id="n1_prop" value="180" min="30" class="calc-input">
+                </div>
+                <div>
+                    <label>x₁ (éxitos):</label>
+                    <input type="number" id="x1_prop" value="144" min="0" class="calc-input">
+                </div>
+                <div style="grid-column: 1 / -1; background: #e8f5e9; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                    <strong>Grupo 2:</strong>
+                </div>
+                <div>
+                    <label>n₂ (tamaño muestra):</label>
+                    <input type="number" id="n2_prop" value="200" min="30" class="calc-input">
+                </div>
+                <div>
+                    <label>x₂ (éxitos):</label>
+                    <input type="number" id="x2_prop" value="174" min="0" class="calc-input">
+                </div>
+                <div>
+                    <label>Nivel de confianza (%):</label>
+                    <select id="confianza_dosprop" class="calc-input">
+                        <option value="0.90">90%</option>
+                        <option value="0.95" selected>95%</option>
+                        <option value="0.99">99%</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="calcularICDosProporciones()" class="btn">Calcular IC</button>
+        </div>
+        <div id="resultado-dos-proporciones" class="result-box" style="display:none;"></div>
+    </div>
+    
+    <!-- CALCULADORA: IC PARA RAZÓN DE VARIANZAS -->
+    <div id="calc-razon-varianzas" class="calc-section" style="display:none;">
+        <h3>📐 IC para Razón de Varianzas</h3>
+        <div class="r-box">
+            <div class="grid-2cols">
+                <div style="grid-column: 1 / -1; background: #e3f2fd; padding: 10px; border-radius: 5px;">
+                    <strong>Grupo 1:</strong>
+                </div>
+                <div>
+                    <label>n₁:</label>
+                    <input type="number" id="n1_var" value="15" min="2" class="calc-input">
+                </div>
+                <div>
+                    <label>s₁² (varianza):</label>
+                    <input type="number" id="s1sq_var" value="0.0025" step="0.0001" min="0" class="calc-input">
+                </div>
+                <div style="grid-column: 1 / -1; background: #e8f5e9; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                    <strong>Grupo 2:</strong>
+                </div>
+                <div>
+                    <label>n₂:</label>
+                    <input type="number" id="n2_var" value="12" min="2" class="calc-input">
+                </div>
+                <div>
+                    <label>s₂² (varianza):</label>
+                    <input type="number" id="s2sq_var" value="0.0016" step="0.0001" min="0" class="calc-input">
+                </div>
+                <div>
+                    <label>Nivel de confianza (%):</label>
+                    <select id="confianza_razonvar" class="calc-input">
+                        <option value="0.90">90%</option>
+                        <option value="0.95" selected>95%</option>
+                        <option value="0.99">99%</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="calcularICRazonVarianzas()" class="btn">Calcular IC</button>
+        </div>
+        <div id="resultado-razon-varianzas" class="result-box" style="display:none;"></div>
+    </div>
+</div>
+

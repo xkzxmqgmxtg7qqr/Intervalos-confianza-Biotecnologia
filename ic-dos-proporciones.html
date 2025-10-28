@@ -1,0 +1,176 @@
+<div class="card">
+                <h2>📉 IC para Diferencia de Dos Proporciones</h2>
+                
+                <h3>📐 Fórmula</h3>
+                <div class="formula-box">
+                    <p>\[IC = (\hat{p}_1 - \hat{p}_2) \pm z_{\alpha/2} \cdot \sqrt{\frac{\hat{p}_1(1-\hat{p}_1)}{n_1} + \frac{\hat{p}_2(1-\hat{p}_2)}{n_2}}\]</p>
+                    <p>Donde:</p>
+                    <ul>
+                        <li>\(\hat{p}_1 = \frac{x_1}{n_1}\) = Proporción muestral del grupo 1</li>
+                        <li>\(\hat{p}_2 = \frac{x_2}{n_2}\) = Proporción muestral del grupo 2</li>
+                        <li>x₁, x₂ = Número de éxitos en cada grupo</li>
+                        <li>n₁, n₂ = Tamaños de muestra</li>
+                    </ul>
+                    
+                    <h4>Condiciones de validez:</h4>
+                    <ul>
+                        <li>n₁·p̂₁ ≥ 10, n₁·(1-p̂₁) ≥ 10</li>
+                        <li>n₂·p̂₂ ≥ 10, n₂·(1-p̂₂) ≥ 10</li>
+                        <li>Muestras independientes</li>
+                    </ul>
+                </div>
+                
+                <h3>🧬 Ejemplo 1: Comparación de Métodos de Transfección</h3>
+                <div class="example-box">
+                    <h4>Contexto:</h4>
+                    <p>Un laboratorio compara dos métodos de transfección de células HEK293 con un plásmido reportero GFP:</p>
+                    <ul>
+                        <li><strong>Método A (Lipofectamina):</strong> 180 células transfectadas, 144 expresan GFP</li>
+                        <li><strong>Método B (Electroporación):</strong> 200 células transfectadas, 174 expresan GFP</li>
+                    </ul>
+                    <p><strong>Objetivo:</strong> Construir IC 95% para la diferencia de eficiencias (p_B - p_A)</p>
+                    
+                    <h4>Solución Paso a Paso:</h4>
+                    <p><strong>Paso 1:</strong> Calcular proporciones muestrales</p>
+                    <p>\[\hat{p}_A = \frac{144}{180} = 0.800 \quad (80.0\%)\]</p>
+                    <p>\[\hat{p}_B = \frac{174}{200} = 0.870 \quad (87.0\%)\]</p>
+                    
+                    <p><strong>Paso 2:</strong> Verificar condiciones</p>
+                    <ul>
+                        <li>Método A: 180×0.80 = 144 ≥ 10 ✓,  180×0.20 = 36 ≥ 10 ✓</li>
+                        <li>Método B: 200×0.87 = 174 ≥ 10 ✓,  200×0.13 = 26 ≥ 10 ✓</li>
+                    </ul>
+                    
+                    <p><strong>Paso 3:</strong> Calcular diferencia</p>
+                    <p>\[\hat{p}_B - \hat{p}_A = 0.870 - 0.800 = 0.070 \quad (7.0\%)\]</p>
+                    
+                    <p><strong>Paso 4:</strong> Calcular error estándar</p>
+                    <p>\[SE = \sqrt{\frac{0.80 \times 0.20}{180} + \frac{0.87 \times 0.13}{200}}\]</p>
+                    <p>\[SE = \sqrt{0.000889 + 0.000566} = \sqrt{0.001455} = 0.0381\]</p>
+                    
+                    <p><strong>Paso 5:</strong> Valor crítico y margen de error</p>
+                    <p>z<sub>0.025</sub> = 1.96</p>
+                    <p>ME = 1.96 × 0.0381 = 0.0747</p>
+                    
+                    <p><strong>Paso 6:</strong> Construir IC</p>
+                    <p>\[IC_{95\%} = [0.070 - 0.0747, 0.070 + 0.0747]\]</p>
+                    <p><strong>IC 95% = [-0.0047, 0.1447]</strong></p>
+                    <p>En porcentaje: <strong>[-0.47%, 14.47%]</strong></p>
+                    
+                    <h4>✅ Interpretación:</h4>
+                    <p>Con 95% de confianza, la diferencia en eficiencia de transfección (Electroporación - Lipofectamina) está entre -0.47% y 14.47%.</p>
+                    <p><strong>Conclusión:</strong> Como el intervalo incluye el cero, no hay evidencia estadística concluyente de que la electroporación sea significativamente mejor que lipofectamina al 95% de confianza, aunque la electroporación muestra una tendencia favorable (7% mayor en la muestra).</p>
+                </div>
+                
+                <h3>🦠 Ejemplo 2: Tasa de Contaminación en Biorreactores</h3>
+                <div class="example-box">
+                    <h4>Contexto:</h4>
+                    <p>Una planta de producción biofarmacéutica compara la tasa de contaminación bacteriana en dos tipos de biorreactores:</p>
+                    <ul>
+                        <li><strong>Biorreactor Tipo A:</strong> 250 lotes, 18 contaminados → p̂_A = 0.072 (7.2%)</li>
+                        <li><strong>Biorreactor Tipo B:</strong> 300 lotes, 12 contaminados → p̂_B = 0.040 (4.0%)</li>
+                    </ul>
+                    
+                    <h4>Solución:</h4>
+                    <p>Diferencia: p̂_A - p̂_B = 0.072 - 0.040 = 0.032 (3.2%)</p>
+                    <p>\[SE = \sqrt{\frac{0.072 \times 0.928}{250} + \frac{0.040 \times 0.960}{300}} = 0.0197\]</p>
+                    <p>ME = 1.96 × 0.0197 = 0.0386</p>
+                    <p><strong>IC 95% = [-0.0066, 0.0706]</strong> o <strong>[-0.66%, 7.06%]</strong></p>
+                    
+                    <h4>✅ Interpretación:</h4>
+                    <p>Con 95% de confianza, la diferencia en tasa de contaminación (Tipo A - Tipo B) está entre -0.66% y 7.06%.</p>
+                    <p><strong>Decisión práctica:</strong> Aunque el IC incluye cero (no significancia estadística estricta), el Tipo B muestra menor contaminación. Se recomienda análisis de costo-beneficio considerando que el Tipo B podría reducir hasta 7% la contaminación.</p>
+                </div>
+                
+                <h3>💻 Código Python para IC de Diferencia de Proporciones</h3>
+                <div class="code-block"><pre><code class="language-python">import numpy as np
+from scipy import stats
+from statsmodels.stats.proportion import confint_proportions_2indep
+
+# Datos de transfección
+n1, x1 = 180, 144  # Lipofectamina
+n2, x2 = 200, 174  # Electroporación
+
+p1 = x1 / n1
+p2 = x2 / n2
+diff = p2 - p1
+
+print("═"*60)
+print("IC PARA DIFERENCIA DE PROPORCIONES")
+print("═"*60)
+print(f"\nMétodo A (Lipofectamina):")
+print(f"  n = {n1}, x = {x1}, p̂ = {p1:.4f} ({p1*100:.2f}%)")
+print(f"\nMétodo B (Electroporación):")
+print(f"  n = {n2}, x = {x2}, p̂ = {p2:.4f} ({p2*100:.2f}%)")
+print(f"\nDiferencia (B - A): {diff:.4f} ({diff*100:.2f}%)")
+
+# Método 1: Cálculo manual
+se = np.sqrt(p1*(1-p1)/n1 + p2*(1-p2)/n2)
+z_crit = 1.96
+me = z_crit * se
+ic_manual = (diff - me, diff + me)
+
+print(f"\nMétodo Manual:")
+print(f"  Error estándar: {se:.4f}")
+print(f"  Margen de error: ±{me:.4f}")
+print(f"  IC 95%: [{ic_manual[0]:.4f}, {ic_manual[1]:.4f}]")
+print(f"  IC 95%: [{ic_manual[0]*100:.2f}%, {ic_manual[1]*100:.2f}%]")
+
+# Método 2: Usando statsmodels
+ic_stats = confint_proportions_2indep(x1, n1, x2, n2, method='wald')
+print(f"\nMétodo statsmodels:")
+print(f"  IC 95%: [{ic_stats[0]:.4f}, {ic_stats[1]:.4f}]")
+
+# Interpretación
+print(f"\n{'═'*60}")
+print("INTERPRETACIÓN")
+print("═"*60)
+if ic_manual[0] > 0:
+    print("✓ Electroporación es significativamente MEJOR")
+elif ic_manual[1] < 0:
+    print("✗ Lipofectamina es significativamente MEJOR")
+else:
+    print("⚠ No hay diferencia estadísticamente significativa")
+    print("  (el IC incluye el cero)")</code></pre></div>
+                
+                <h3>📊 Código R para IC de Diferencia de Proporciones</h3>
+                <div class="code-block"><pre><code class="language-r"># Datos de transfección
+n1 <- 180
+x1 <- 144
+n2 <- 200  
+x2 <- 174
+
+p1 <- x1 / n1
+p2 <- x2 / n2
+
+cat("═══════════════════════════════════════════════════════\n")
+cat("IC PARA DIFERENCIA DE PROPORCIONES\n")
+cat("═══════════════════════════════════════════════════════\n\n")
+
+cat("Método A (Lipofectamina):\n")
+cat("  n =", n1, ", x =", x1, ", p̂ =", round(p1, 4), 
+    sprintf("(%.2f%%)\n", p1*100))
+
+cat("\nMétodo B (Electroporación):\n")
+cat("  n =", n2, ", x =", x2, ", p̂ =", round(p2, 4), 
+    sprintf("(%.2f%%)\n\n", p2*100))
+
+# Usar prop.test para IC
+resultado <- prop.test(c(x2, x1), c(n2, n1), conf.level = 0.95)
+
+cat("IC 95% para la diferencia (B - A):\n")
+cat("  Diferencia estimada:", resultado$estimate[1] - resultado$estimate[2], "\n")
+cat("  IC 95%: [", resultado$conf.int[1], ",", resultado$conf.int[2], "]\n")
+cat("  En porcentaje: [", round(resultado$conf.int[1]*100, 2), "%,",
+    round(resultado$conf.int[2]*100, 2), "%]\n\n")
+
+# Interpretación
+if (resultado$conf.int[1] > 0) {
+  cat("✓ Electroporación es significativamente MEJOR\n")
+} else if (resultado$conf.int[2] < 0) {
+  cat("✗ Lipofectamina es significativamente MEJOR\n")
+} else {
+  cat("⚠ No hay diferencia estadísticamente significativa\n")
+  cat("  (el IC incluye el cero)\n")
+}</code></pre></div>
+            </div>

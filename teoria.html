@@ -1,0 +1,143 @@
+<div class="card">
+                <h2>📚 Teoría de Intervalos de Confianza</h2>
+                
+                <h3>🎯 Concepto Fundamental</h3>
+                <p>Un <strong>intervalo de confianza (IC)</strong> es un rango de valores calculado a partir de datos muestrales que, con una probabilidad específica (nivel de confianza), contiene el verdadero valor del parámetro poblacional.</p>
+                
+                <div class="formula-box">
+                    <h3>Estructura General de un IC:</h3>
+                    <p>\[IC = \text{Estimador} \pm \text{Margen de Error}\]</p>
+                    <p>\[IC = \hat{\theta} \pm (\text{Valor Crítico}) \times SE(\hat{\theta})\]</p>
+                    <p>Donde:</p>
+                    <ul>
+                        <li>\(\hat{\theta}\) = Estimador puntual del parámetro</li>
+                        <li>\(SE(\hat{\theta})\) = Error estándar del estimador</li>
+                        <li>Valor Crítico = Depende de la distribución y nivel de confianza</li>
+                    </ul>
+                </div>
+                
+                <h3>📊 Interpretación del Nivel de Confianza</h3>
+                <div class="example-box">
+                    <p><strong>Un IC del 95% significa:</strong></p>
+                    <p>Si tomamos 100 muestras diferentes y calculamos 100 intervalos de confianza del 95%, aproximadamente <strong>95 de esos intervalos contendrán el verdadero parámetro poblacional</strong>, y 5 no lo contendrán.</p>
+                    <p>⚠️ <strong>NO significa</strong> que hay 95% de probabilidad de que el parámetro esté en este intervalo específico.</p>
+                </div>
+                
+                <h3>🔬 Intervalos de Confianza en Biotecnología</h3>
+                <p>En biotecnología, los IC son cruciales para:</p>
+                <ul>
+                    <li>🧬 Estimar concentraciones de proteínas o enzimas</li>
+                    <li>🦠 Cuantificar crecimiento microbiano</li>
+                    <li>💊 Evaluar eficacia de tratamientos</li>
+                    <li>🔬 Comparar rendimientos de procesos</li>
+                    <li>📊 Validar métodos analíticos</li>
+                </ul>
+                
+                <h3>📐 Tipos de Intervalos de Confianza</h3>
+                
+                <h4>1️⃣ IC para la Media de Una Población (σ conocida)</h4>
+                <div class="formula-box">
+                    <p>\[IC = \bar{x} \pm z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}}\]</p>
+                    <p>Usar cuando:</p>
+                    <ul>
+                        <li>La varianza poblacional (σ²) es conocida</li>
+                        <li>n ≥ 30 (TLC aplica)</li>
+                    </ul>
+                </div>
+                
+                <h4>2️⃣ IC para la Media de Una Población (σ desconocida)</h4>
+                <div class="formula-box">
+                    <p>\[IC = \bar{x} \pm t_{n-1,\alpha/2} \cdot \frac{s}{\sqrt{n}}\]</p>
+                    <p>Usar cuando:</p>
+                    <ul>
+                        <li>La varianza poblacional es desconocida</li>
+                        <li>Datos provienen de distribución normal</li>
+                        <li>Se usa distribución t de Student</li>
+                    </ul>
+                </div>
+                
+                <h4>3️⃣ IC para una Proporción</h4>
+                <div class="formula-box">
+                    <p>\[IC = \hat{p} \pm z_{\alpha/2} \cdot \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}\]</p>
+                    <p>Condiciones:</p>
+                    <ul>
+                        <li>n·p̂ ≥ 10 y n·(1-p̂) ≥ 10</li>
+                        <li>Muestra aleatoria</li>
+                    </ul>
+                </div>
+                
+                <h4>4️⃣ IC para Diferencia de Medias (Dos Poblaciones Independientes)</h4>
+                <div class="formula-box">
+                    <p>Varianzas iguales (pooled):</p>
+                    <p>\[IC = (\bar{x}_1 - \bar{x}_2) \pm t_{n_1+n_2-2,\alpha/2} \cdot s_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}\]</p>
+                    <p>Donde:</p>
+                    <p>\[s_p = \sqrt{\frac{(n_1-1)s_1^2 + (n_2-1)s_2^2}{n_1+n_2-2}}\]</p>
+                    
+                    <p style="margin-top:15px;">Varianzas diferentes (Welch):</p>
+                    <p>\[IC = (\bar{x}_1 - \bar{x}_2) \pm t_{\nu,\alpha/2} \cdot \sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}\]</p>
+                </div>
+                
+                <h4>5️⃣ IC para Diferencia de Proporciones</h4>
+                <div class="formula-box">
+                    <p>\[IC = (\hat{p}_1 - \hat{p}_2) \pm z_{\alpha/2} \cdot \sqrt{\frac{\hat{p}_1(1-\hat{p}_1)}{n_1} + \frac{\hat{p}_2(1-\hat{p}_2)}{n_2}}\]</p>
+                </div>
+                
+                <h4>6️⃣ IC para la Varianza</h4>
+                <div class="formula-box">
+                    <p>\[IC = \left[ \frac{(n-1)s^2}{\chi^2_{n-1,\alpha/2}}, \frac{(n-1)s^2}{\chi^2_{n-1,1-\alpha/2}} \right]\]</p>
+                    <p>Usa distribución Chi-cuadrado (χ²)</p>
+                </div>
+                
+                <h3>📈 Valores Críticos Comunes</h3>
+                <table>
+                    <thead>
+                        <tr><th>Nivel de Confianza</th><th>α</th><th>z<sub>α/2</sub></th><th>Interpretación</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>90%</td><td>0.10</td><td>1.645</td><td>Exploración inicial</td></tr>
+                        <tr><td>95%</td><td>0.05</td><td>1.960</td><td>Estándar en ciencia</td></tr>
+                        <tr><td>99%</td><td>0.01</td><td>2.576</td><td>Alta precisión</td></tr>
+                        <tr><td>99.9%</td><td>0.001</td><td>3.291</td><td>Crítico (farmacéutico)</td></tr>
+                    </tbody>
+                </table>
+                
+                <h3>⚖️ Factores que Afectan el Ancho del IC</h3>
+                <div class="r-box">
+                    <p><strong>Ancho del IC = 2 × Margen de Error</strong></p>
+                    <ul>
+                        <li>📏 <strong>Tamaño de muestra (n):</strong> ↑n → IC más estrecho</li>
+                        <li>📊 <strong>Variabilidad (s o σ):</strong> ↑s → IC más ancho</li>
+                        <li>🎯 <strong>Nivel de confianza:</strong> ↑confianza → IC más ancho</li>
+                    </ul>
+                </div>
+                
+                <h3>🔬 Ejemplo Práctico en Biotecnología</h3>
+                <div class="example-box">
+                    <h4>Concentración de Proteína Recombinante</h4>
+                    <p><strong>Contexto:</strong> Un laboratorio produce insulina recombinante y mide la concentración (mg/mL) en 25 lotes.</p>
+                    <p><strong>Datos:</strong> x̄ = 5.2 mg/mL, s = 0.8 mg/mL, n = 25</p>
+                    <p><strong>Objetivo:</strong> Estimar IC 95% para la concentración media</p>
+                    
+                    <p><strong>Solución:</strong></p>
+                    <p>1. Como σ es desconocida, usamos distribución t</p>
+                    <p>2. t<sub>24, 0.025</sub> = 2.064</p>
+                    <p>3. Error estándar: SE = 0.8/√25 = 0.16</p>
+                    <p>4. Margen de error: ME = 2.064 × 0.16 = 0.330</p>
+                    <p>5. <strong>IC 95% = [4.87, 5.53] mg/mL</strong></p>
+                    
+                    <p><strong>Interpretación:</strong> Con 95% de confianza, la concentración media poblacional de insulina está entre 4.87 y 5.53 mg/mL.</p>
+                </div>
+                
+                <h3>✅ Supuestos y Verificaciones</h3>
+                <table>
+                    <thead>
+                        <tr><th>IC para</th><th>Supuestos</th><th>Verificación</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Media (t)</td><td>Normalidad (n < 30)</td><td>Shapiro-Wilk, Q-Q plot</td></tr>
+                        <tr><td>Proporción</td><td>np ≥ 10, n(1-p) ≥ 10</td><td>Verificar condiciones</td></tr>
+                        <tr><td>Dos medias</td><td>Normalidad, homocedasticidad</td><td>Levene test, F-test</td></tr>
+                        <tr><td>Varianza</td><td>Normalidad estricta</td><td>Shapiro-Wilk</td></tr>
+                    </tbody>
+                </table>
+            </div>
